@@ -19,6 +19,27 @@ const c = canvas.getContext("2d")
     c.stroke()
   }
 } */
+//tuto interaction
+
+const mouse = {
+  x: undefined,
+  y: undefined,
+}
+
+const MAX_RADIUS = 50
+const MIN_RADIUS = 10
+
+window.addEventListener("mousemove", (event) => {
+  mouse.x = event.x
+  mouse.y = event.y
+})
+
+// on resize le canvas quand la fenetre est resized
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+  myCircles = createMultipleCircles(800)
+})
 
 // tuto animation
 
@@ -31,6 +52,7 @@ function Circle(x, y, radius, dx, dy) {
   this.red = Math.random() * 255
   this.dRed = 3
   this.circleStyle = `rgb(${this.red}, 150 , 150)`
+  this.minRadius = radius
 
   this.draw = () => {
     c.beginPath()
@@ -59,6 +81,18 @@ function Circle(x, y, radius, dx, dy) {
     this.red = this.red + this.dRed
     this.circleStyle = `rgb(${this.red}, 150 , 150)`
 
+    //tuto interaction
+
+    const growing_viscinity = 100
+
+    if (mouse.x - this.x < growing_viscinity && mouse.x - this.x > -growing_viscinity && mouse.y - this.y < growing_viscinity && mouse.y - this.y > -growing_viscinity) {
+      if (this.radius < MAX_RADIUS) {
+        this.radius += 1
+      }
+    } else if (this.radius > this.minRadius) {
+      this.radius -= 1
+    }
+
     this.draw()
   }
 }
@@ -66,7 +100,7 @@ function Circle(x, y, radius, dx, dy) {
 const createMultipleCircles = (qty) => {
   let circles = []
   for (let i = 0; i < qty; i++) {
-    let radius = Math.random() * 100
+    let radius = Math.random() * 10 + 1
     let x = Math.random() * (innerWidth - radius * 2) + radius
     let y = Math.random() * (innerHeight - radius * 2) + radius
     //velocity
@@ -78,7 +112,7 @@ const createMultipleCircles = (qty) => {
   return circles
 }
 
-const myCircles = createMultipleCircles(25)
+let myCircles = createMultipleCircles(800)
 
 const animate = () => {
   // on crée une boucle d'animation
