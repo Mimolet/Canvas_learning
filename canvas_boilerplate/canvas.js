@@ -10,6 +10,12 @@ const randomColor = () => {
   return colors[index]
 }
 
+const getDistance = (x1, y1, x2, y2) => {
+  const xDistance = x2 - x1
+  const yDistance = y2 - y1
+  return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2))
+}
+
 //CANVAS
 const canvas = document.querySelector("canvas")
 canvas.width = window.innerWidth
@@ -32,6 +38,26 @@ window.addEventListener("mousemove", (event) => {
   mouse.y = event.clientY
 })
 
+//OBJECT
+
+function Object(x, y, radius, color) {
+  this.x = x
+  this.y = y
+  this.radius = radius
+  this.color = color
+
+  this.update = () => {
+    this.draw()
+  }
+  this.draw = () => {
+    c.beginPath()
+    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+    c.fillStyle = this.color
+    c.fill()
+    c.closePath()
+  }
+}
+
 //IMPLEMENTATION
 
 const init = () => {}
@@ -44,4 +70,5 @@ const animate = () => {
   c.clearRect(0, 0, innerWidth, innerHeight)
 }
 
+init()
 animate()
