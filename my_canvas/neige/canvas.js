@@ -49,6 +49,7 @@ function Flocon(x, y, dy, radius, color, dOpacity) {
   this.x = x
   this.y = y
   this.dy = dy
+  this.dx = 0
   this.radius = radius
   this.color = color
   this.dOpacity = dOpacity
@@ -58,7 +59,9 @@ function Flocon(x, y, dy, radius, color, dOpacity) {
     if (this.y > innerHeight) {
       this.y = -50 - this.radius
     }
+
     this.y += this.dy
+    this.x += this.dx
 
     if (this.y > innerHeight / 2) {
       this.opacity -= Math.abs(this.dOpacity)
