@@ -26,6 +26,7 @@ const c = canvas.getContext("2d")
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
+  init()
 })
 
 //MOUSE
@@ -40,18 +41,26 @@ window.addEventListener("mousemove", (event) => {
 
 //OBJECT
 
-function Herbe(x, y, height, baseWidth, colorFill, colorStroke) {
+function Herbe(x, y, height, baseWidth, startRad, colorFill, colorStroke) {
   this.x = x
   this.y = y
   this.height = height
   this.baseWidth = baseWidth
   this.colorFill = colorFill
   this.colorStroke = colorStroke
-  this.xEndVar = randomInt(-50, 50)
-  this.xCtrlTopVar = randomInt(-20, 20)
-  this.xCtrlMidVar = randomInt(-50, 50)
+  this.xEndVar = 0
+  this.xCtrlTopVar = 0
+  this.xCtrlMidVar = 0
+  this.radEnd = startRad
+  this.radTop = startRad
+  this.radMid = startRad + Math.PI / 3
 
   this.update = () => {
+    this.xCtrlTopVar += Math.cos(this.radMid) * 2
+    this.xCtrlMidVar += Math.cos(this.radMid) * 2
+    this.xEndVar += Math.cos(this.radEnd) * 4
+    this.radMid += Math.PI / 20
+    this.radEnd += Math.PI / 20
     this.draw()
   }
   this.draw = () => {
@@ -82,9 +91,15 @@ function Herbe(x, y, height, baseWidth, colorFill, colorStroke) {
 
 //IMPLEMENTATION
 
-let herbe
+let herbes
 const init = () => {
-  herbe = new Herbe(canvas.width / 2, canvas.height, 300, 30, "#852019", "#D13228")
+  herbes = []
+  const baseWidth = 20
+  for (let i = 0; i < innerWidth * 2; i += baseWidth / 2) {
+    const height = randomInt(150, 250)
+    const startRad = Math.random() * Math.PI
+    herbes.push(new Herbe(i, canvas.height, height, baseWidth, startRad, "#14452D", "#268557"))
+  }
 }
 
 //ANIMATION
@@ -93,7 +108,7 @@ const animate = () => {
   requestAnimationFrame(animate)
 
   c.clearRect(0, 0, innerWidth, innerHeight)
-  herbe.update()
+  herbes.forEach((h) => h.update())
 }
 
 init()
