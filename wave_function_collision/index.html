@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Wave Function Collision</title>
+    <script src="wfc.js"></script>
+    <style>
+      canvas {
+        border: 1px solid black;
+        image-rendering: pixelated;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="output" width="50" height="50"></canvas>
+    <script>
+      const img_url_to_data = function (path, callback) {
+        let img = document.createElement("img")
+        img.src = path
+        img.onload = function (e) {
+          console.log(this.width, this.height)
+          const c = document.createElement("canvas")
+          c.width = this.width
+          c.height = this.height
+          const ctx = c.getContext("2d")
+          ctx.drawImage(this, 0, 0)
+          callback(ctx.getImageData(0, 0, this.width, this.height))
+        }
+      }
+
+      const start = function (id) {
+        ouput = document.getElementById("output")
+        ctx = ouput.getContext("2d")
+        imgData = ctx.createImageData(50, 50)
+        model = new OverlappingModel(id.data, id.width, id.height, 2, 50, 50, true, false, 1, 0)
+        let success = model.generate(Math.random, 0)
+        model.graphics(imgData.data)
+        ctx.putImageData(imgData, 0, 0)
+        console.log(success)
+      }
+    </script>
+  </body>
+</html>
