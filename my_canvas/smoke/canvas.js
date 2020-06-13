@@ -47,8 +47,17 @@ window.addEventListener("click", (event) => {
 
 //OBJECT
 
-const INIT_OPACITY = 0.7
-const fireColors = ["white", "yellow", "orange", "red"]
+const INIT_OPACITY = 0.5
+
+function Color(r, g, b) {
+  this.r = r
+  this.g = g
+  this.b = b
+
+  this.getColor = () => {
+    return `rgb(${this.r} ${this.g} ${this.b})`
+  }
+}
 
 function Flame(x, y, radius, color) {
   this.x = x
@@ -58,28 +67,30 @@ function Flame(x, y, radius, color) {
   this.radius = radius
   this.color = color
   this.opacity = INIT_OPACITY
-  this.sparks = [] // generateSparks(this.x, this.y, this.color, 2)
+  this.sparks = []
+  this.radian = randomDecim(0, Math.PI * 2)
 
   this.update = () => {
     this.x += this.dx
     this.y += this.dy
     this.dy = -(1 - this.opacity) * 10
+    this.radian += randomInt(Math.PI / 10, Math.PI / 30)
+    this.dx = randomInt(1, 3) * Math.cos(this.radian)
     this.opacity += -0.02
     this.opacity = Math.max(this.opacity, 0)
     this.radius = Math.max(this.radius - 1, 0)
     this.sparks.forEach((s) => s.update())
+    this.color.g = Math.max(0, this.color.g - 3)
+    this.color.b = Math.max(0, this.color.b - 6)
+    this.color.r = Math.max(0, this.color.r - 0)
     this.draw()
   }
   this.draw = () => {
-    const gradient = c.createRadialGradient(this.x, this.y, 10, this.x, this.y, this.radius * 2)
-    gradient.addColorStop(0, "white")
-    gradient.addColorStop(0.9, this.color)
-    gradient.addColorStop(0.9, "transparent")
     c.beginPath()
     c.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
     c.save()
     c.globalAlpha = this.opacity
-    c.fillStyle = gradient
+    c.fillStyle = this.color.getColor()
     c.fill()
     c.restore()
     c.closePath()
@@ -93,7 +104,7 @@ function Spark(x, y, radius, color) {
   this.dy = -randomInt(3, 7)
   this.radian = randomDecim(0, Math.PI * 2)
   this.radius = radius
-  this.color = "orange"
+  this.color = color
 
   this.update = () => {
     this.x += this.dx
@@ -106,7 +117,7 @@ function Spark(x, y, radius, color) {
   this.draw = () => {
     c.beginPath()
     c.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-    c.fillStyle = this.color
+    c.fillStyle = this.color.getColor()
     c.fill()
     c.closePath()
   }
@@ -135,29 +146,34 @@ const animate = () => {
   requestAnimationFrame(animate)
 
   c.clearRect(0, 0, innerWidth, innerHeight)
-  if (flames.length < 50 && !flames.find((flame) => flame.x === mouse.x && flame.y === mouse.y)) {
-    const x = randomInt(mouse.x - 5, mouse.x + 5)
-    const y = randomInt(mouse.y - 5, mouse.y + 5)
-    flames.push(new Flame(x, y, randomInt(15, 40), "white"))
+  const oX = innerWidth / 2
+  const oY = (innerHeight * 3) / 4
+  const initColor = new Color(255, 255, 255)
+  if (flames.length < 50 && !flames.find((flame) => flame.x === oX && flame.y === oY)) {
+    const x = randomInt(oX - 5, oX + 5)
+    const y = randomInt(oY - 5, oY + 5)
+    flames.push(new Flame(x, y, randomInt(15, 40), initColor))
   }
   flames.forEach((flame) => {
     flame.update()
     if (flame.opacity <= 0) {
-      flame.x = randomInt(mouse.x - 5, mouse.x + 5)
-      flame.y = randomInt(mouse.y - 5, mouse.y + 5)
+      flame.x = randomInt(oX - 5, oX + 5)
+      flame.y = randomInt(oY - 5, oY + 5)
       flame.opacity = INIT_OPACITY
       flame.radius = randomInt(15, 40)
-      //flame.sparks = generateSparks(flame.x, flame.y, flame.color, 2)
+      flame.color = initColor
     }
-    if (Math.random() > 0.99 && flame.sparks.length < 2) {
-      const sX = randomInt(mouse.x - 10, mouse.x + 10)
-      const sY = randomInt(mouse.y - 10, mouse.y + 10)
+    if (Math.random() > 0.999 && flame.sparks.length < 2) {
+      const sX = randomInt(oX - 10, oX + 10)
+      const sY = randomInt(oY - 10, oY + 10)
       flame.sparks.push(new Spark(sX, sY, 1, flame.color))
     }
     flame.sparks.forEach((spark) => {
+      // Si l'étincelle sort de l'écran
       if (spark.y <= 0) {
-        spark.y = randomInt(mouse.y - 10, mouse.y + 10)
-        spark.x = randomInt(mouse.x - 10, mouse.x + 10)
+        spark.y = randomInt(oY - 10, oY + 10)
+        spark.x = randomInt(oX - 10, oX + 10)
+        spark.color = flame.color
       }
     })
   })
