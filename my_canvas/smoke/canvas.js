@@ -42,7 +42,7 @@ window.addEventListener("mousemove", (event) => {
   mouse.y = event.clientY
 })
 window.addEventListener("click", (event) => {
-  init()
+  fires.push(new Fire(mouse.x, mouse.y))
 })
 
 //OBJECT
@@ -63,6 +63,12 @@ function Color(r, g, b) {
     this.g = Math.max(0, this.g + dG)
     this.b = Math.max(0, this.b + dB)
   }
+}
+
+function Fire(x, y) {
+  this.x = x
+  this.y = y
+  this.flames = []
 }
 
 function Flame(x, y, radius, color) {
@@ -139,9 +145,10 @@ const generateSparks = (x, y, color, qty) => {
 
 //IMPLEMENTATION
 
-let flames = []
+let fires = []
+
 const init = () => {
-  flames = []
+  fires = []
 }
 
 //ANIMATION
@@ -150,8 +157,10 @@ const animate = () => {
   requestAnimationFrame(animate)
 
   c.clearRect(0, 0, innerWidth, innerHeight)
-  const oX = innerWidth / 2
-  const oY = (innerHeight * 3) / 4
+  fires.forEach((fire) => animateFlames(fire.flames, fire.x, fire.y))
+}
+
+const animateFlames = (flames, oX, oY) => {
   const initColor = new Color(255, 255, 255)
   if (flames.length < 50 && !flames.find((flame) => flame.x === oX && flame.y === oY)) {
     const x = randomInt(oX - 5, oX + 5)
