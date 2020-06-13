@@ -77,21 +77,46 @@ function Flame(x, y, radius, color) {
   this.dx = 0
   this.dy = -(1 - INIT_OPACITY) * 10
   this.radius = radius
+  this.initRadius = radius
+  this.radiusDecay = false
   this.color = color
   this.opacity = INIT_OPACITY
   this.sparks = []
   this.radian = randomDecim(0, Math.PI * 2)
 
+  this.reinit = (x, y, initColor) => {
+    this.x = x
+    this.y = y
+    this.opacity = INIT_OPACITY
+    this.radius = randomInt(10, 20)
+    this.initRadius = this.radius
+    this.radiusDecay = false
+    this.color = initColor
+  }
+
   this.update = () => {
     this.x += this.dx
     this.y += this.dy
+
     this.dy = -(1 - this.opacity) * 10
+
     this.radian += randomInt(Math.PI / 10, Math.PI / 30)
     this.dx = randomInt(1, 3) * Math.cos(this.radian)
-    this.opacity += -0.02
-    this.opacity = Math.max(this.opacity, 0)
-    this.radius = Math.max(this.radius - 1, 0)
+
+    this.opacity = Math.max(this.opacity - 0.02, 0)
+
+    // La flamme croît en taille avant de décroître
+    if (this.radius < 2 * this.initRadius && !this.radiusDecay) {
+      this.radius += 2
+    } else {
+      if (!this.radiusDecay) {
+        this.radiusDecay = true
+      }
+      this.radius = Math.max(this.radius - 1, 0)
+    }
+
     this.color.changeColor(0, -3, -6)
+
     this.sparks.forEach((s) => s.update())
     this.draw()
   }
@@ -165,16 +190,14 @@ const animateFlames = (flames, oX, oY) => {
   if (flames.length < 50 && !flames.find((flame) => flame.x === oX && flame.y === oY)) {
     const x = randomInt(oX - 5, oX + 5)
     const y = randomInt(oY - 5, oY + 5)
-    flames.push(new Flame(x, y, randomInt(15, 40), initColor))
+    flames.push(new Flame(x, y, randomInt(10, 20), initColor))
   }
   flames.forEach((flame) => {
     flame.update()
     if (flame.opacity <= 0) {
-      flame.x = randomInt(oX - 5, oX + 5)
-      flame.y = randomInt(oY - 5, oY + 5)
-      flame.opacity = INIT_OPACITY
-      flame.radius = randomInt(15, 40)
-      flame.color = initColor
+      const newX = randomInt(oX - 5, oX + 5)
+      const newY = randomInt(oY - 5, oY + 5)
+      flame.reinit(newX, newY, initColor)
     }
     if (Math.random() > 0.999 && flame.sparks.length < 2) {
       const sX = randomInt(oX - 10, oX + 10)
