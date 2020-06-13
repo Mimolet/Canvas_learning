@@ -125,17 +125,21 @@ function Flame(x, y, radius, color) {
       this.radius = Math.max(this.radius - 1, 0)
     }
 
-    this.color.changeColor(0, -3, -6)
+    this.color.changeColor(-3, 0, 0)
 
     this.sparks.forEach((s) => s.update())
     this.draw()
   }
   this.draw = () => {
+    const gradient = c.createRadialGradient(this.x, this.y, this.radius / 2, this.x, this.y, this.radius)
+    gradient.addColorStop(0, this.color.getColor())
+    gradient.addColorStop(1, "transparent")
+
     c.beginPath()
     c.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
     c.save()
     c.globalAlpha = this.opacity
-    c.fillStyle = this.color.getColor()
+    c.fillStyle = gradient /* this.color.getColor() */
     c.fill()
     c.restore()
     c.closePath()
@@ -188,11 +192,29 @@ const init = () => {
 
 //ANIMATION
 
+let stop = false
+let frameCount = 0
+let fps, fpsInterval, startTime, now, then, elapsed
+
+const startAnimating = (fps) => {
+  fpsInterval = 1000 / fps
+  then = Date.now()
+  startTime = then
+  animate()
+}
+
 const animate = () => {
   requestAnimationFrame(animate)
 
-  c.clearRect(0, 0, innerWidth, innerHeight)
-  fires.forEach((fire) => animateFlames(fire.flames, fire.x, fire.y))
+  now = Date.now()
+  elapsed = now - then
+
+  if (elapsed > fpsInterval) {
+    then = now - (elapsed % fpsInterval)
+
+    c.clearRect(0, 0, innerWidth, innerHeight)
+    fires.forEach((fire) => animateFlames(fire.flames, fire.x, fire.y))
+  }
 }
 
 const animateFlames = (flames, oX, oY) => {
@@ -209,10 +231,11 @@ const animateFlames = (flames, oX, oY) => {
       const newY = randomInt(oY - 5, oY + 5)
       flame.reinit(newX, newY, initColor)
     }
+    // Gestion des étincelles
     if (Math.random() > 0.999 && flame.sparks.length < 2) {
       const sX = randomInt(oX - 10, oX + 10)
       const sY = randomInt(oY - 10, oY + 10)
-      flame.sparks.push(new Spark(sX, sY, 1, flame.color))
+      // flame.sparks.push(new Spark(sX, sY, 1, flame.color))
     }
     flame.sparks.forEach((spark) => {
       // Si l'étincelle sort de l'écran
@@ -226,4 +249,4 @@ const animateFlames = (flames, oX, oY) => {
 }
 
 init()
-animate()
+startAnimating(40)
