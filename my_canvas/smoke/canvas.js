@@ -20,15 +20,23 @@ const getDistance = (x1, y1, x2, y2) => {
   return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2))
 }
 
+// HTML INTERFACE
+
+let isThereSparks = false
+const sparksCheckbox = document.querySelector("#sparks")
+sparksCheckbox.addEventListener("change", function () {
+  isThereSparks = this.checked
+})
+
 //CANVAS
 const canvas = document.querySelector("canvas")
-canvas.width = window.innerWidth
+canvas.width = (window.innerWidth * 8) / 10
 canvas.height = window.innerHeight
 const c = canvas.getContext("2d")
 
 //WINDOW
 window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth
+  canvas.width = (window.innerWidth * 8) / 10
   canvas.height = window.innerHeight
 })
 
@@ -42,7 +50,9 @@ window.addEventListener("mousemove", (event) => {
   mouse.y = event.clientY
 })
 window.addEventListener("click", (event) => {
-  fires.push(new Fire(mouse.x, mouse.y))
+  if (mouse.x < canvas.width) {
+    fires.push(new Fire(mouse.x, mouse.y))
+  }
 })
 
 //OBJECT
@@ -127,7 +137,13 @@ function Flame(x, y, radius, color) {
 
     this.color.changeColor(-3, 0, 0)
 
-    this.sparks.forEach((s) => s.update())
+    // A voir si c'est intelligent de mettre ça là.
+    // Dans l'absolu, je suis pas convaincu du bien-fondé de la chose.
+    // Mais tout de suite c'est le plus simple.
+    if (isThereSparks) {
+      this.sparks.forEach((s) => s.update())
+    }
+
     this.draw()
   }
   this.draw = () => {
@@ -208,11 +224,10 @@ const animate = () => {
 
   now = Date.now()
   elapsed = now - then
-
   if (elapsed > fpsInterval) {
     then = now - (elapsed % fpsInterval)
 
-    c.clearRect(0, 0, innerWidth, innerHeight)
+    c.clearRect(0, 0, canvas.width, canvas.height)
     fires.forEach((fire) => animateFlames(fire.flames, fire.x, fire.y))
   }
 }
@@ -235,7 +250,7 @@ const animateFlames = (flames, oX, oY) => {
     if (Math.random() > 0.999 && flame.sparks.length < 2) {
       const sX = randomInt(oX - 10, oX + 10)
       const sY = randomInt(oY - 10, oY + 10)
-      // flame.sparks.push(new Spark(sX, sY, 1, flame.color))
+      flame.sparks.push(new Spark(sX, sY, 1, flame.color))
     }
     flame.sparks.forEach((spark) => {
       // Si l'étincelle sort de l'écran
@@ -249,4 +264,4 @@ const animateFlames = (flames, oX, oY) => {
 }
 
 init()
-startAnimating(40)
+startAnimating(60)

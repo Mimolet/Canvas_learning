@@ -2,17 +2,45 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>canvas Resize</title>
+    <title>Flamme</title>
     <style type="text/css">
       body {
         margin: 0;
         overflow: hidden;
         background-color: black;
+        flex-direction: row;
+        font-family: Arial, Helvetica, sans-serif;
+        color: white;
+      }
+      canvas {
+        flex: 8;
+      }
+      #container {
+        display: flex;
+      }
+      #interface {
+        flex: 2;
+        background-color: #1e1e21;
+      }
+      .section {
+        border-radius: 3px;
+        background-color: #212121;
+        flex: 1;
+        padding: 6px;
+        margin: 3px;
       }
     </style>
   </head>
   <body>
-    <canvas></canvas>
+    <div id="container">
+      <canvas></canvas>
+      <div id="interface">
+        <div class="section">
+          <label for="sparks">Sparks</label>
+          <input type="checkbox" id="sparks" name="isThereSparks" value="false" />
+        </div>
+      </div>
+    </div>
     <script src="canvas.js"></script>
   </body>
 </html>
