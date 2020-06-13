@@ -20,14 +20,29 @@
       }
       #interface {
         flex: 2;
-        background-color: #1e1e21;
+        background-color: #1a1a1a;
       }
       .section {
         border-radius: 3px;
         background-color: #212121;
         flex: 1;
-        padding: 6px;
-        margin: 3px;
+        padding: 8px;
+        margin: 6px;
+        border: 1px solid #5c6664;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .sliderSection {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 10px 0px;
+        width: 100%;
+      }
+      label {
+        margin-right: 5px;
       }
     </style>
   </head>
@@ -36,8 +51,25 @@
       <canvas></canvas>
       <div id="interface">
         <div class="section">
-          <label for="sparks">Sparks</label>
-          <input type="checkbox" id="sparks" name="isThereSparks" value="false" />
+          <div>
+            <label for="sparks">Sparks</label>
+            <input type="checkbox" id="sparks" name="sparks" value="false" />
+          </div>
+        </div>
+        <div class="section">
+          <h2>Flame color</h2>
+          <div class="sliderSection">
+            <label for="red">Red</label>
+            <input type="range" min="0" max="10" id="red" name="red" value="5" />
+          </div>
+          <div class="sliderSection">
+            <label for="green">Green</label>
+            <input type="range" min="0" max="10" id="green" name="green" value="5" />
+          </div>
+          <div class="sliderSection">
+            <label for="blue">Blue</label>
+            <input type="range" min="0" max="10" id="blue" name="blue" value="5" />
+          </div>
         </div>
       </div>
     </div>

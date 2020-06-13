@@ -22,10 +22,30 @@ const getDistance = (x1, y1, x2, y2) => {
 
 // HTML INTERFACE
 
+// Sparks checkbox
 let isThereSparks = false
 const sparksCheckbox = document.querySelector("#sparks")
 sparksCheckbox.addEventListener("change", function () {
   isThereSparks = this.checked
+})
+
+// Flame color ranges
+let redValue = 5
+let greenValue = 5
+let blueValue = 5
+
+const redRange = document.querySelector("#red")
+const greenRange = document.querySelector("#green")
+const blueRange = document.querySelector("#blue")
+
+redRange.addEventListener("input", function () {
+  redValue = this.value
+})
+greenRange.addEventListener("input", function () {
+  greenValue = this.value
+})
+blueRange.addEventListener("input", function () {
+  blueValue = this.value
 })
 
 //CANVAS
@@ -135,7 +155,11 @@ function Flame(x, y, radius, color) {
       this.radius = Math.max(this.radius - 1, 0)
     }
 
-    this.color.changeColor(-3, 0, 0)
+    // Idem qu'en dessous, passer des variables globales comme ça,
+    // c'est pas une bonne pratique je pense.
+    // Commenter par ordre chronologique et pas de haut en bas
+    // c'est pas fou non plus.
+    this.color.changeColor(-redValue, -greenValue, -blueValue)
 
     // A voir si c'est intelligent de mettre ça là.
     // Dans l'absolu, je suis pas convaincu du bien-fondé de la chose.
