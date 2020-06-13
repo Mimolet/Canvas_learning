@@ -57,6 +57,12 @@ function Color(r, g, b) {
   this.getColor = () => {
     return `rgb(${this.r} ${this.g} ${this.b})`
   }
+
+  this.changeColor = (dR, dG, dB) => {
+    this.r = Math.max(0, this.r + dR)
+    this.g = Math.max(0, this.g + dG)
+    this.b = Math.max(0, this.b + dB)
+  }
 }
 
 function Flame(x, y, radius, color) {
@@ -79,10 +85,8 @@ function Flame(x, y, radius, color) {
     this.opacity += -0.02
     this.opacity = Math.max(this.opacity, 0)
     this.radius = Math.max(this.radius - 1, 0)
+    this.color.changeColor(0, -3, -6)
     this.sparks.forEach((s) => s.update())
-    this.color.g = Math.max(0, this.color.g - 3)
-    this.color.b = Math.max(0, this.color.b - 6)
-    this.color.r = Math.max(0, this.color.r - 0)
     this.draw()
   }
   this.draw = () => {
