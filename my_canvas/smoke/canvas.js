@@ -47,7 +47,8 @@ window.addEventListener("click", (event) => {
 
 //OBJECT
 
-const INIT_OPACITY = 0.5
+const INIT_OPACITY = 0.1
+const MAX_OPACITY = 0.4
 
 function Color(r, g, b) {
   this.r = r
@@ -81,6 +82,7 @@ function Flame(x, y, radius, color) {
   this.radiusDecay = false
   this.color = color
   this.opacity = INIT_OPACITY
+  this.opacityDecay = false
   this.sparks = []
   this.radian = randomDecim(0, Math.PI * 2)
 
@@ -92,6 +94,7 @@ function Flame(x, y, radius, color) {
     this.initRadius = this.radius
     this.radiusDecay = false
     this.color = initColor
+    this.opacityDecay = false
   }
 
   this.update = () => {
@@ -103,7 +106,14 @@ function Flame(x, y, radius, color) {
     this.radian += randomInt(Math.PI / 10, Math.PI / 30)
     this.dx = randomInt(1, 3) * Math.cos(this.radian)
 
-    this.opacity = Math.max(this.opacity - 0.02, 0)
+    if (this.opacity < MAX_OPACITY && !this.opacityDecay) {
+      this.opacity = Math.max(this.opacity + 0.07, 0)
+    } else {
+      if (!this.opacityDecay) {
+        this.opacityDecay = true
+      }
+      this.opacity = Math.max(this.opacity - 0.02, 0)
+    }
 
     // La flamme croît en taille avant de décroître
     if (this.radius < 2 * this.initRadius && !this.radiusDecay) {
