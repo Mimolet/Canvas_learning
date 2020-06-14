@@ -55,6 +55,14 @@ blueRange.addEventListener("input", function () {
   blueValue = this.value
 })
 
+//Global Alpha Composing
+const selectComposition = document.querySelector("#composition")
+let compositionValue = selectComposition.value
+
+selectComposition.addEventListener("change", function () {
+  compositionValue = this.value
+})
+
 //CANVAS
 const canvas = document.querySelector("canvas")
 canvas.width = (window.innerWidth * 8) / 10
@@ -184,6 +192,7 @@ function Flame(x, y, radius, color) {
     gradient.addColorStop(1, "transparent")
 
     c.beginPath()
+    c.globalCompositeOperation = compositionValue
     c.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
     c.save()
     c.globalAlpha = this.opacity

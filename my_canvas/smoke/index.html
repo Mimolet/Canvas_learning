@@ -41,6 +41,9 @@
         margin: 10px 0px;
         width: 100%;
       }
+      select {
+        margin-top: 10px;
+      }
       label {
         margin-right: 5px;
       }
@@ -70,6 +73,34 @@
             <label for="blue">Blue</label>
             <input type="range" min="0" max="10" id="blue" name="blue" value="6" />
           </div>
+        </div>
+        <div class="section">
+          <label>Composition</label>
+          <select name="composition" id="composition">
+            <option value="source-over" name="compositing">Source-over</option>
+
+            <option value="destination-over" name="compositing">Destination-over</option>
+
+            <option value="lighter" name="compositing">Lighter</option>
+
+            <option value="multiply" name="compositing">Multiply</option>
+
+            <option value="screen" name="compositing">Screen</option>
+
+            <option value="overlay" name="compositing" selected>Overlay</option>
+
+            <option value="darken" name="compositing">Darken</option>
+
+            <option value="lighten" name="compositing">Lighten</option>
+
+            <option value="color-dodge" name="compositing">Color-dodge</option>
+
+            <option value="color-burn" name="compositing">Color-burn</option>
+
+            <option value="hard-light" name="compositing">Hard-light</option>
+
+            <option value="soft-light" name="compositing">Soft-light</option>
+          </select>
         </div>
       </div>
     </div>
