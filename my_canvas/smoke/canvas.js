@@ -247,6 +247,14 @@ const init = () => {
   fires = []
 }
 
+const displayCentralText = (text) => {
+  c.font = "20px Arial"
+  c.fillStyle = "white"
+  c.textBaseline = "middle"
+  c.textAlign = "center"
+  c.fillText(text, canvas.width / 2, canvas.height / 2)
+}
+
 //ANIMATION
 
 // Gestion du nombre de FPS
@@ -271,6 +279,9 @@ const animate = () => {
     then = now - (elapsed % fpsInterval)
 
     c.clearRect(0, 0, canvas.width, canvas.height)
+    if (fires.length === 0) {
+      displayCentralText("Pour commencer, cliquez quelque part sur l'écran.")
+    }
     fires.forEach((fire) => animateFlames(fire.flames, fire.x, fire.y))
   }
 }
