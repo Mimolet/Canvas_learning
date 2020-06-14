@@ -1,10 +1,13 @@
 //UTILS
 
 const randomInt = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min
+  if (min > max) {
+    return Math.floor(Math.random() * (min - max + 1)) + max
+  } else {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+  }
 }
 
-const colors = ["#6C7780", "#8CC9FF", "#DAEEFF", "#466580", "#ADBECC"]
 const randomColor = (colorArray) => {
   const index = randomInt(0, colorArray.length - 1)
   return colorArray[index]
@@ -20,6 +23,10 @@ const getDistance = (x1, y1, x2, y2) => {
   return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2))
 }
 
+const randomIntAroundPoint = (coord, var1, var2) => {
+  return randomInt(coord + var1, coord + var2)
+}
+
 // HTML INTERFACE
 
 // Sparks checkbox
@@ -30,13 +37,13 @@ sparksCheckbox.addEventListener("change", function () {
 })
 
 // Flame color ranges
-let redValue = 5
-let greenValue = 5
-let blueValue = 5
-
 const redRange = document.querySelector("#red")
 const greenRange = document.querySelector("#green")
 const blueRange = document.querySelector("#blue")
+
+let redValue = redRange.value
+let greenValue = greenRange.value
+let blueValue = blueRange.value
 
 redRange.addEventListener("input", function () {
   redValue = this.value
@@ -136,6 +143,7 @@ function Flame(x, y, radius, color) {
     this.radian += randomInt(Math.PI / 10, Math.PI / 30)
     this.dx = randomInt(1, 3) * Math.cos(this.radian)
 
+    // La flamme croît en intensité avant de décroître
     if (this.opacity < MAX_OPACITY && !this.opacityDecay) {
       this.opacity = Math.max(this.opacity + 0.07, 0)
     } else {
@@ -232,6 +240,7 @@ const init = () => {
 
 //ANIMATION
 
+// Gestion du nombre de FPS
 let stop = false
 let frameCount = 0
 let fps, fpsInterval, startTime, now, then, elapsed
@@ -246,6 +255,7 @@ const startAnimating = (fps) => {
 const animate = () => {
   requestAnimationFrame(animate)
 
+  // Gestion du nombre de FPS
   now = Date.now()
   elapsed = now - then
   if (elapsed > fpsInterval) {
@@ -259,28 +269,29 @@ const animate = () => {
 const animateFlames = (flames, oX, oY) => {
   const initColor = new Color(255, 255, 255)
   if (flames.length < 50 && !flames.find((flame) => flame.x === oX && flame.y === oY)) {
-    const x = randomInt(oX - 5, oX + 5)
-    const y = randomInt(oY - 5, oY + 5)
+    const x = randomIntAroundPoint(oX, -5, 5)
+    const y = randomIntAroundPoint(oY, -5, 5)
     flames.push(new Flame(x, y, randomInt(10, 20), initColor))
   }
   flames.forEach((flame) => {
     flame.update()
+    // Si une flamme n'est plus visible, elle est renvoyée à la base du feu
     if (flame.opacity <= 0) {
-      const newX = randomInt(oX - 5, oX + 5)
-      const newY = randomInt(oY - 5, oY + 5)
+      const newX = randomIntAroundPoint(oX, -5, 5)
+      const newY = randomIntAroundPoint(oY, -5, 5)
       flame.reinit(newX, newY, initColor)
     }
     // Gestion des étincelles
     if (Math.random() > 0.999 && flame.sparks.length < 2) {
-      const sX = randomInt(oX - 10, oX + 10)
-      const sY = randomInt(oY - 10, oY + 10)
+      const sX = randomIntAroundPoint(oX, -10, 10)
+      const sY = randomIntAroundPoint(oY, -10, 10)
       flame.sparks.push(new Spark(sX, sY, 1, flame.color))
     }
     flame.sparks.forEach((spark) => {
       // Si l'étincelle sort de l'écran
       if (spark.y <= 0) {
-        spark.y = randomInt(oY - 10, oY + 10)
-        spark.x = randomInt(oX - 10, oX + 10)
+        spark.y = randomIntAroundPoint(oY, -10, 10)
+        spark.x = randomIntAroundPoint(oX, -10, 10)
         spark.color = flame.color
       }
     })
