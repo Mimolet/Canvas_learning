@@ -130,6 +130,7 @@ function Flame(x, y, radius, color) {
   this.opacityDecay = false
   this.sparks = []
   this.radian = randomDecim(0, Math.PI * 2)
+  this.displacementCount = 0
 
   this.reinit = (x, y, initColor) => {
     this.x = x
@@ -302,19 +303,21 @@ const animateFlames = (flames, oX, oY) => {
       flame.reinit(newX, newY, initColor)
     }
     // Gestion des étincelles
-    if (Math.random() > 0.999 && flame.sparks.length < 2) {
-      const sX = randomIntAroundPoint(oX, -10, 10)
-      const sY = randomIntAroundPoint(oY, -10, 10)
-      flame.sparks.push(new Spark(sX, sY, 1, flame.color))
-    }
-    flame.sparks.forEach((spark) => {
-      // Si l'étincelle sort de l'écran
-      if (spark.y <= 0) {
-        spark.y = randomIntAroundPoint(oY, -10, 10)
-        spark.x = randomIntAroundPoint(oX, -10, 10)
-        spark.color = flame.color
+    if (isThereSparks) {
+      if (Math.random() > 0.999 && flame.sparks.length < 2) {
+        const sX = randomIntAroundPoint(oX, -10, 10)
+        const sY = randomIntAroundPoint(oY, -20, -10)
+        flame.sparks.push(new Spark(sX, sY, 1, flame.color))
       }
-    })
+      flame.sparks.forEach((spark) => {
+        // Si l'étincelle sort de l'écran
+        if (spark.y <= 0) {
+          spark.x = randomIntAroundPoint(oX, -10, 10)
+          spark.y = randomIntAroundPoint(oY, -30, -20)
+          spark.color = flame.color
+        }
+      })
+    }
   })
 }
 
